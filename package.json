@@ -1,23 +1,33 @@
 {
-  "name": "@nodejscart/mysql-query-builder",
-  "version": "1.0.0",
-  "description": "A query builder for [MySQL](https://github.com/mysqljs/mysql)",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kt65/mysql-query-builder.git"
-  },
-  "keywords": [
-    "mysql",
-    "querybuilder"
-  ],
-  "author": "The Nguyen (https://nodejscart.com/)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/kt65/mysql-query-builder/issues"
-  },
-  "homepage": "https://github.com/kt65/mysql-query-builder#readme"
+    "name": "@nodejscart/mysql-query-builder",
+    "version": "1.0.0",
+    "description": "A query builder for [MySQL](https://github.com/mysqljs/mysql)",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/kt65/mysql-query-builder.git"
+    },
+    "keywords": [
+        "mysql",
+        "querybuilder",
+        "mysql query builder",
+        "query builder",
+        "nodejs mysql query builder"
+    ],
+    "author": "The Nguyen (https://nodejscart.com/)",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/kt65/mysql-query-builder/issues"
+    },
+    "homepage": "https://github.com/kt65/mysql-query-builder#readme",
+    "dependencies": {
+        "mysql": "^2.18.1",
+        "uniqid": "^5.3.0"
+    },
+    "engines": {
+        "node": ">= 12.0.0"
+    }
 }
