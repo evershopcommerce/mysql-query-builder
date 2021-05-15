@@ -801,11 +801,6 @@ function del(table) {
     return new DeleteQuery(table);
 }
 
-/**
- *
- * @param {*} link
- * @Return {Node}
- */
 function node(link) {
     let node = new Node();
     node._link = link;
