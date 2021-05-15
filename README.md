@@ -134,14 +134,14 @@ const products = await query.execute(connection);
 const {insert} = require('@nodejscart/mysql-query-builder')
 
 const query = insert("user")
-.givent({name: "David", email: "email@email.com", "phone": "123456", status: 1, notExistedColumn: "This will not be a part of query"});
+.given({name: "David", email: "email@email.com", "phone": "123456", status: 1, notExistedColumn: "This will not be a part of query"});
 await query.execute(connection);
 ```
 ```javascript
 const {update} = require('@nodejscart/mysql-query-builder')
 
 const query = update("user")
-.givent({name: "David", email: "email@email.com", "phone": "123456", status: 1, notExistedColumn: "This will not be a part of query"})
+.given({name: "David", email: "email@email.com", "phone": "123456", status: 1, notExistedColumn: "This will not be a part of query"})
 .where("user_id", "=", 1);
 await query.execute(connection);
 ```
