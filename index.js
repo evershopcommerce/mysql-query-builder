@@ -542,7 +542,7 @@ class SelectQuery extends Query {
         if (this._alias)
             from += ` AS \`${this._alias}\``;
 
-        return [this._select.render().trim(), "FROM", from.trim(), this._join.render().trim(), this._where.render().trim(), this._groupBy.render().trim(), this._having.render().trim(), this._orderBy.render().trim(), this._limit.render().trim()].join(" ");
+        return [this._select.render().trim(), "FROM", from.trim(), this._join.render().trim(), this._where.render().trim(), this._groupBy.render().trim(), this._having.render().trim(), this._orderBy.render().trim(), this._limit.render().trim()].filter((e) => e !== "").join(" ");
     }
 
     async load(connection) {
@@ -554,7 +554,6 @@ class SelectQuery extends Query {
 
     async execute(connection) {
         let sql = await this.sql(connection);
-        console.log(sql);
         let binding = [];
         for (var key in this._binding) {
             if (this._binding.hasOwnProperty(key)) {
@@ -562,12 +561,10 @@ class SelectQuery extends Query {
                 binding.push(this._binding[key]);
             }
         }
-        //console.log(binding);
         const fn = util.promisify(connection.query).bind(connection);
         try {
             return await fn(sql, binding)
         } catch (e) {
-            //console.log(e);
             if (e.errno === 1054) {
                 this.orderBy(null);
                 return await super.execute(connection);
@@ -639,12 +636,9 @@ class UpdateQuery extends Query {
         if (set.length === 0)
             throw new Error("No data was provided" + this._table,);
 
-        var sql = ["UPDATE", this._table, "SET", set.join(", "), this._where.render()].join(" ");
-        // console.log(sql);
-        // console.log(this._binding);
+        var sql = ["UPDATE", this._table, "SET", set.join(", "), this._where.render()].filter((e) => e !== "").join(" ");
 
         return sql;
-        //console.log(util.inspect(this._where, { showHidden: false, depth: null }))
     }
 }
 
@@ -696,9 +690,8 @@ class InsertQuery extends Query {
             this._binding[key] = this._data[field["Field"]];
         });
 
-        let sql = ["INSERT INTO", this._table, "(", fs.join(", "), ")", "VALUES", "(", vs.join(", "), ")"].join(" ");
-        // console.log(sql);
-        // console.log(this._binding);
+        let sql = ["INSERT INTO", this._table, "(", fs.join(", "), ")", "VALUES", "(", vs.join(", "), ")"].filter((e) => e !== "").join(" ");
+
         return sql;
     }
 }
@@ -756,9 +749,8 @@ class InsertOnUpdateQuery extends Query {
 
         this._binding = { ...this._binding, ...usp };
 
-        let sql = ["INSERT INTO", this._table, "(", fs.join(", "), ")", "VALUES", "(", vs.join(", "), ")", "ON DUPLICATE KEY UPDATE", us.join(", ")].join(" ");
-        // console.log(sql);
-        // console.log(this._binding);
+        let sql = ["INSERT INTO", this._table, "(", fs.join(", "), ")", "VALUES", "(", vs.join(", "), ")", "ON DUPLICATE KEY UPDATE", us.join(", ")].filter((e) => e !== "").join(" ");
+
         return sql;
     }
 }
