@@ -11,25 +11,14 @@ npm install @nodejscart/mysql-query-builder
 ## Example
 
 ### Select
-<table>
-<tr>
-<th> MySQL </th>
-<th> Query builder </th>
-</tr>
-<tr>
-<td>
-
 ```javascript
-var mysql      = require('mysql');
-connection.query('SELECT * FROM product WHERE product_id > ?', [1], function (error, results, fields) {
-  if (error) throw error;
-  console.log('The solution is: ', results[0].solution);
-});
+// var mysql = require('mysql');
+//
+// connection.query('SELECT * FROM product WHERE product_id > ?', [1], function (error, results, fields) {
+//   if (error) throw error;
+//    console.log('The solution is: ', results[0].solution);
+// });
 ```
-
-</td>
-<td>
-
 ```javascript
 const {select} = require('@nodejscart/mysql-query-builder')
 
@@ -37,8 +26,21 @@ const products = await select("*")
 .from("product")
 .where("product_id", ">", 1)
 .execute(connection);
-```
 
-</td>
-</tr>
-</table>
+
+// var mysql = require('mysql');
+//
+// connection.query('SELECT * FROM product WHERE product_id > ? AND sku LIKE ?', [1, "sku"], function (error, results, fields) {
+//   if (error) throw error;
+//    console.log('The solution is: ', results[0].solution);
+// });
+```
+```javascript
+const {select} = require('@nodejscart/mysql-query-builder')
+
+const products = await select("*")
+.from("product")
+.where("product_id", ">", 1)
+.and("sku", "LIKE", "sku")
+.execute(connection);
+```
