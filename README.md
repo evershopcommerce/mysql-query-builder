@@ -8,7 +8,7 @@ A query builder for [NodeJs and MySQL](https://github.com/mysqljs/mysql)
 npm install @nodejscart/mysql-query-builder
 ```
 
-## Example
+## Usage guide
 
 #### Simple select
 ```javascript
@@ -134,7 +134,7 @@ const products = await query.execute(connection);
 const {insert} = require('@nodejscart/mysql-query-builder')
 
 const query = insert("user")
-.given({name: "David", email: "email@email.com", "phone": "123456", status: 1, notExistedColumn: "This will not be a part of query"});
+.given({name: "David", email: "email@email.com", "phone": "123456", status: 1, notExistedColumn: "This will not be a part of the query"});
 await query.execute(connection);
 ```
 ```javascript
@@ -144,4 +144,31 @@ const query = update("user")
 .given({name: "David", email: "email@email.com", "phone": "123456", status: 1, notExistedColumn: "This will not be a part of query"})
 .where("user_id", "=", 1);
 await query.execute(connection);
+```
+#### Working with transaction
+
+```javascript
+const {insert, getConnection, startTransaction, commit, rollback} = require('@nodejscart/mysql-query-builder');
+
+const pool = mysql.createPool({
+    host: "localhost",
+    user: "root",
+    password: "123456",
+    database: "test",
+    dateStrings: true
+});
+
+// Create a connection from the pool
+const connection = await getConnection(pool);
+
+// Start a transaction
+await startTransaction(connection);
+try {
+  await insert("user")
+        .given({name: "David", email: "email@email.com", "phone": "123456", status: 1, notExistedColumn: "This will not be a part of the query"})
+        .execute(connection);
+  await commit(connection);
+} catch(e) {
+  await rollback(connection);
+}
 ```
