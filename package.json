@@ -1,6 +1,6 @@
 {
     "name": "@nodejscart/mysql-query-builder",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A query builder for [MySQL](https://github.com/mysqljs/mysql)",
     "main": "index.js",
     "scripts": {

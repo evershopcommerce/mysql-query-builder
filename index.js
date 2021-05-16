@@ -12,7 +12,7 @@ class Select {
         if (
             /^[a-zA-Z_1-9]+([.])(`)[a-zA-Z0-9-_]+(`)$/.test(field) ||
             /^[a-zA-Z_1-9]+([.])([*])$/.test(field) ||
-            /^[A-Z ]+([(])[a-zA-Z0-9 _=<>(,&).`]+([)])$/.test(field)
+            /^[A-Z ]+([(])[a-zA-Z0-9* _=<>(,&).`]+([)])$/.test(field)
         )
             f += `${field}`;
         else
@@ -554,6 +554,7 @@ class SelectQuery extends Query {
 
     async execute(connection) {
         let sql = await this.sql(connection);
+        console.log(sql);
         let binding = [];
         for (var key in this._binding) {
             if (this._binding.hasOwnProperty(key)) {
@@ -770,7 +771,7 @@ class DeleteQuery extends Query {
     }
 }
 
-module.exports = { select, insert, update, node, del, insertOnUpdate };
+module.exports = { select, insert, update, node, del, insertOnUpdate, getConnection, startTransaction, commit, rollback };
 
 function select() {
     let select = new SelectQuery();
@@ -806,4 +807,25 @@ function node(link) {
     node._link = link;
 
     return node;
+}
+
+/* Create a connection from a pool */
+async function getConnection(pool) {
+    return await util.promisify(pool.getConnection).bind(pool)();
+}
+
+async function startTransaction(connection) {
+    await util.promisify(connection.query).bind(connection)("SET autocommit = 0");
+    await util.promisify(connection.query).bind(connection)("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
+    await util.promisify(connection.query).bind(connection)("START TRANSACTION");
+}
+
+async function commit(connection) {
+    await util.promisify(connection.query).bind(connection)("COMMIT");
+    await connection.destroy();
+}
+
+async function rollback(connection) {
+    await util.promisify(connection.query).bind(connection)("ROLLBACK");
+    await connection.destroy();
 }
