@@ -10,7 +10,7 @@ npm install @nodejscart/mysql-query-builder
 
 ## Usage guide
 
-#### Simple select
+### Simple select
 ```javascript
 // var mysql = require('mysql');
 // var connection = mysql.createConnection({
@@ -34,7 +34,7 @@ const products = await select("*")
 .where("product_id", ">", 1)
 .execute(connection);
 ```
-#### More complex where
+### More complex where
 ```javascript
 // var mysql = require('mysql');
 // var mysql = require('mysql');
@@ -59,7 +59,7 @@ const products = await select("*")
 .and("sku", "LIKE", "sku")
 .execute(connection);
 ```
-#### Event more complex where
+### Event more complex where
 ```javascript
 // var mysql = require('mysql');
 // var mysql = require('mysql');
@@ -84,7 +84,7 @@ query.andWhere("price", ">", 100);
 
 const products = await query.execute(connection);
 ```
-#### Insert&update
+### Insert&update
 <table>
 <tr>
 <th> user_id </th>
@@ -145,7 +145,7 @@ const query = update("user")
 .where("user_id", "=", 1);
 await query.execute(connection);
 ```
-#### Working with transaction
+### Working with transaction
 
 ```javascript
 const {insert, getConnection, startTransaction, commit, rollback} = require('@nodejscart/mysql-query-builder');
