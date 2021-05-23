@@ -1,4 +1,8 @@
-# MySQL-query-builder
+# MySQL Query Builder
+
+[![Build](https://github.com/kt65/mysql-query-builder/actions/workflows/github-build.yml/badge.svg)](https://github.com/kt65/mysql-query-builder/actions/workflows/github-build.yml)
+[![npm version](https://badge.fury.io/js/%40nodejscart%2Fmysql-query-builder.svg)](https://badge.fury.io/js/%40nodejscart%2Fmysql-query-builder)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A query builder for [NodeJs and MySQL](https://github.com/mysqljs/mysql)
 
@@ -32,7 +36,7 @@ const {select} = require('@nodejscart/mysql-query-builder')
 const products = await select("*")
 .from("product")
 .where("product_id", ">", 1)
-.execute(connection);
+.execute(pool);
 ```
 ### More complex where
 ```javascript
@@ -57,7 +61,7 @@ const products = await select("*")
 .from("product")
 .where("product_id", ">", 1)
 .and("sku", "LIKE", "sku")
-.execute(connection);
+.execute(pool);
 ```
 ### Event more complex where
 ```javascript
@@ -80,10 +84,38 @@ const {select} = require('@nodejscart/mysql-query-builder')
 
 const query = select("*").from("product");
 query.where("product_id", ">", 1).and("sku", "LIKE", "sku");
+query.orWhere("price", ">", 100);
+
+const products = await query.execute(pool);
+```
+
+### Join table
+```javascript
+// var mysql = require('mysql');
+// var mysql = require('mysql');
+// var connection = mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'me',
+//   password : 'secret',
+//   database : 'my_db'
+// });
+
+// connection.query('SELECT * FROM product LEFT JOIN price ON product.id = price.id WHERE (product_id > ? AND sku LIKE ?) OR price > ?', [1, "sku", 100], function (error, results, fields) {
+//   if (error) throw error;
+//    console.log('The solution is: ', results[0].solution);
+// });
+```
+```javascript
+const {select} = require('@nodejscart/mysql-query-builder')
+
+const query = select("*").from("product");
+query.leftJoin('price').on('product.`product_id`', '=', 'price.`product_id`');
+query.where("product_id", ">", 1).and("sku", "LIKE", "sku");
 query.andWhere("price", ">", 100);
 
-const products = await query.execute(connection);
+const products = await query.execute(pool);
 ```
+
 ### Insert&update
 <table>
 <tr>
@@ -135,7 +167,7 @@ const {insert} = require('@nodejscart/mysql-query-builder')
 
 const query = insert("user")
 .given({name: "David", email: "email@email.com", "phone": "123456", status: 1, notExistedColumn: "This will not be a part of the query"});
-await query.execute(connection);
+await query.execute(pool);
 ```
 ```javascript
 const {update} = require('@nodejscart/mysql-query-builder')
@@ -143,7 +175,7 @@ const {update} = require('@nodejscart/mysql-query-builder')
 const query = update("user")
 .given({name: "David", email: "email@email.com", "phone": "123456", status: 1, notExistedColumn: "This will not be a part of query"})
 .where("user_id", "=", 1);
-await query.execute(connection);
+await query.execute(pool);
 ```
 ### Working with transaction
 
@@ -172,3 +204,6 @@ try {
   await rollback(connection);
 }
 ```
+## Security
+
+All user provided data will be escaped. Please check [this](https://github.com/mysqljs/mysql#escaping-query-values) for more detail. 
