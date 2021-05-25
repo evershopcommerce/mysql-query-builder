@@ -1,10 +1,10 @@
-# MySQL Query Builder
+# MySQL query builder for NodeJS
 
-[![Build](https://github.com/kt65/mysql-query-builder/actions/workflows/github-build.yml/badge.svg)](https://github.com/kt65/mysql-query-builder/actions/workflows/github-build.yml)
+[![Build](https://github.com/kt65/mysql-query-builder/actions/workflows/build.yml/badge.svg)](https://github.com/kt65/mysql-query-builder/actions/workflows/build.yml)
 [![npm version](https://badge.fury.io/js/%40nodejscart%2Fmysql-query-builder.svg)](https://badge.fury.io/js/%40nodejscart%2Fmysql-query-builder)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A query builder for [NodeJs and MySQL](https://github.com/mysqljs/mysql)
+A MySQL query builder for NodeJS. 
 
 ## Installation
 
@@ -13,7 +13,7 @@ npm install @nodejscart/mysql-query-builder
 ```
 
 ## Usage guide
-
+It implements async/await.
 ### Simple select
 ```javascript
 // var mysql = require('mysql');
