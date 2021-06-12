@@ -554,7 +554,6 @@ class SelectQuery extends Query {
 
     async execute(connection) {
         let sql = await this.sql(connection);
-        console.log(sql);
         let binding = [];
         for (var key in this._binding) {
             if (this._binding.hasOwnProperty(key)) {
