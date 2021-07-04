@@ -814,8 +814,8 @@ async function getConnection(pool) {
 }
 
 async function startTransaction(connection) {
-    await util.promisify(connection.query).bind(connection)("SET autocommit = 0");
     await util.promisify(connection.query).bind(connection)("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
+    await util.promisify(connection.query).bind(connection)("SET autocommit = 0");
     await util.promisify(connection.query).bind(connection)("START TRANSACTION");
 }
 
