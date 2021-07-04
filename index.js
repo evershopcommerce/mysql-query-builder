@@ -636,7 +636,7 @@ class UpdateQuery extends Query {
         if (set.length === 0)
             throw new Error("No data was provided" + this._table,);
 
-        var sql = ["UPDATE", this._table, "SET", set.join(", "), this._where.render()].filter((e) => e !== "").join(" ");
+        var sql = ["UPDATE", `\`${this._table}\``, "SET", set.join(", "), this._where.render()].filter((e) => e !== "").join(" ");
 
         return sql;
     }
@@ -690,7 +690,7 @@ class InsertQuery extends Query {
             this._binding[key] = this._data[field["Field"]];
         });
 
-        let sql = ["INSERT INTO", this._table, "(", fs.join(", "), ")", "VALUES", "(", vs.join(", "), ")"].filter((e) => e !== "").join(" ");
+        let sql = ["INSERT INTO", `\`${this._table}\``, "(", fs.join(", "), ")", "VALUES", "(", vs.join(", "), ")"].filter((e) => e !== "").join(" ");
 
         return sql;
     }
@@ -749,7 +749,7 @@ class InsertOnUpdateQuery extends Query {
 
         this._binding = { ...this._binding, ...usp };
 
-        let sql = ["INSERT INTO", this._table, "(", fs.join(", "), ")", "VALUES", "(", vs.join(", "), ")", "ON DUPLICATE KEY UPDATE", us.join(", ")].filter((e) => e !== "").join(" ");
+        let sql = ["INSERT INTO", `\`${this._table}\``, "(", fs.join(", "), ")", "VALUES", "(", vs.join(", "), ")", "ON DUPLICATE KEY UPDATE", us.join(", ")].filter((e) => e !== "").join(" ");
 
         return sql;
     }
@@ -766,7 +766,7 @@ class DeleteQuery extends Query {
         if (!this._table)
             throw Error("You need to call specific method first");
 
-        return ["DELETE FROM", this._table, this._where.render().trim()].join(" ");
+        return ["DELETE FROM", `\`${this._table}\``, this._where.render().trim()].join(" ");
     }
 }
 
@@ -814,8 +814,8 @@ async function getConnection(pool) {
 }
 
 async function startTransaction(connection) {
-    await util.promisify(connection.query).bind(connection)("SET autocommit = 0");
     await util.promisify(connection.query).bind(connection)("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
+    await util.promisify(connection.query).bind(connection)("SET autocommit = 0");
     await util.promisify(connection.query).bind(connection)("START TRANSACTION");
 }
 
