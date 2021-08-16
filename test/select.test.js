@@ -33,18 +33,8 @@ test('Simple select', () => {
 
 test('Select with function', () => {
     let query = select().from("product");
-    query.select("SUM(`product`.id)");
-    query.select("SUM ( product.id)");
-    query.select("SUM ( product.id )", "sum");
-    query.where("name", "LIKE", "abc");
-    query.limit(2, '5');
-    expect(parseSql(query.sql())).toBe(true);
-});
-
-test('Select with function and alias', () => {
-    let query = select().from("product", "p");
-    query.select("SUM(`product`.id)");
-    query.select("SUM ( product.id)");
+    query.select("SUM(product.id)");
+    query.select("SUM (product.id)");
     query.select("SUM ( product.id )", "sum");
     query.where("name", "LIKE", "abc");
     query.limit(2, '5');

@@ -71,9 +71,7 @@ class Leaf {
             }
         }
         this._link = link;
-        this._field = field.replace(/[a-zA-Z]+\./g, (a) => {
-            return '`' + a.replace('.', '') + '`' + '.';
-        });
+        this._field = field;
         this._operator = operator.toUpperCase();
         this._parent = node;
     }
@@ -364,9 +362,7 @@ class GroupBy {
     }
 
     add(field) {
-        this._fields.push(field.replace(/[a-zA-Z]+\./g, (a) => {
-            return '`' + a.replace('.', '') + '`' + '.';
-        }));
+        this._fields.push(field);
 
         return this;
     }
@@ -392,9 +388,7 @@ class OrderBy {
     }
 
     add(field, direction) {
-        this._field = field.replace(/[a-zA-Z]+\./g, (a) => {
-            return '`' + a.replace('.', '') + '`' + '.';
-        });
+        this._field = field;
         this._direction = direction == null ? "DESC" : direction;
 
         return this;
