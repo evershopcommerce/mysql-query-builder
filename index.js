@@ -629,6 +629,8 @@ class UpdateQuery extends Query {
                 return;
             if (this._data[field["Field"]] === undefined)
                 return;
+            if (field['Null'] === 'NO' && field['Default'] !== null && !this._data[field["Field"]])
+                return
             let key = uniqid();
             set.push(`${field["Field"]} = :${key}`);
             this._binding[key] = this._data[field["Field"]];
@@ -684,6 +686,8 @@ class InsertQuery extends Query {
                 return;
             if (this._data[field["Field"]] === undefined)
                 return;
+            if (field['Null'] === 'NO' && field['Default'] !== null && !this._data[field["Field"]])
+                return
             let key = uniqid();
             fs.push(`${field["Field"]}`);
             vs.push(`:${key}`);
@@ -738,6 +742,8 @@ class InsertOnUpdateQuery extends Query {
                 return;
             if (this._data[field["Field"]] === undefined)
                 return;
+            if (field['Null'] === 'NO' && field['Default'] !== null && !this._data[field["Field"]])
+                return
             let key = uniqid();
             let ukey = uniqid();
             fs.push(`${field["Field"]}`);
