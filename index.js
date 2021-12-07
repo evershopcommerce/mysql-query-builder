@@ -563,12 +563,15 @@ class SelectQuery extends Query {
         }
         const fn = util.promisify(connection.query).bind(connection);
         try {
-            return await fn(sql, binding)
+            let result = await fn(sql, binding);
+            release(connection);
+            return result;
         } catch (e) {
             if (e.errno === 1054) {
                 this.orderBy(null);
                 return await super.execute(connection);
             } else {
+                release(connection);
                 throw e;
             }
         }
@@ -823,14 +826,27 @@ async function startTransaction(connection) {
     await util.promisify(connection.query).bind(connection)("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
     await util.promisify(connection.query).bind(connection)("SET autocommit = 0");
     await util.promisify(connection.query).bind(connection)("START TRANSACTION");
+    connection.INTRANSACTION = true;
+    connection.COMMITTED = false;
 }
 
 async function commit(connection) {
     await util.promisify(connection.query).bind(connection)("COMMIT");
-    await connection.destroy();
+    connection.INTRANSACTION = false;
+    connection.COMMITTED = true;
+    release(connection);
 }
 
 async function rollback(connection) {
     await util.promisify(connection.query).bind(connection)("ROLLBACK");
     await connection.destroy();
+}
+
+function release(connection) {
+    if (connection.INTRANSACTION === true) {
+        return;
+    }
+    if (connection._pool) {
+        connection._pool.releaseConnection(connection);
+    }
 }
