@@ -552,7 +552,7 @@ class SelectQuery extends Query {
         return results[0] || null;
     }
 
-    async execute(connection) {
+    async execute(connection, releaseConnection = false) {
         let sql = await this.sql(connection);
         let binding = [];
         for (var key in this._binding) {
@@ -564,14 +564,16 @@ class SelectQuery extends Query {
         const fn = util.promisify(connection.query).bind(connection);
         try {
             let result = await fn(sql, binding);
-            release(connection);
+            if (releaseConnection)
+                release(connection);
             return result;
         } catch (e) {
             if (e.errno === 1054) {
                 this.orderBy(null);
                 return await super.execute(connection);
             } else {
-                release(connection);
+                if (releaseConnection)
+                    release(connection);
                 throw e;
             }
         }
