@@ -198,13 +198,13 @@ class Node {
 
 
     // a "proxy" function to Query execute method
-    async execute(connection) {
-        return await this._query.execute(connection);
+    async execute(connection, releaseConnection = true) {
+        return await this._query.execute(connection, releaseConnection);
     }
 
     // a "proxy" function to Query load method
-    async load(connection) {
-        return await this._query.load(connection);
+    async load(connection, releaseConnection = true) {
+        return await this._query.load(connection, releaseConnection);
     }
 
     clone(query, parent) {
@@ -449,7 +449,7 @@ class Query {
         return this._binding;
     }
 
-    async execute(connection) {
+    async execute(connection, releaseConnection = true) {
         let sql = await this.sql(connection);
         let binding = [];
         for (let key in this._binding) {
@@ -459,7 +459,11 @@ class Query {
             }
         }
         const fn = util.promisify(connection.query).bind(connection);
-        return await fn(sql, binding);
+        let result = await fn(sql, binding);
+        if (releaseConnection)
+            release(connection);
+
+        return result;
     }
 }
 
@@ -545,14 +549,14 @@ class SelectQuery extends Query {
         return [this._select.render().trim(), "FROM", from.trim(), this._join.render().trim(), this._where.render().trim(), this._groupBy.render().trim(), this._having.render().trim(), this._orderBy.render().trim(), this._limit.render().trim()].filter((e) => e !== "").join(" ");
     }
 
-    async load(connection) {
+    async load(connection, releaseConnection = true) {
         this.limit(0, 1);
-        let results = await this.execute(connection);
+        let results = await this.execute(connection, releaseConnection);
 
         return results[0] || null;
     }
 
-    async execute(connection, releaseConnection = false) {
+    async execute(connection, releaseConnection = true) {
         let sql = await this.sql(connection);
         let binding = [];
         for (var key in this._binding) {
@@ -570,7 +574,7 @@ class SelectQuery extends Query {
         } catch (e) {
             if (e.errno === 1054) {
                 this.orderBy(null);
-                return await super.execute(connection);
+                return await super.execute(connection, releaseConnection);
             } else {
                 if (releaseConnection)
                     release(connection);
@@ -781,7 +785,7 @@ class DeleteQuery extends Query {
     }
 }
 
-module.exports = { select, insert, update, node, del, insertOnUpdate, getConnection, startTransaction, commit, rollback };
+module.exports = { select, insert, update, node, del, insertOnUpdate, getConnection, startTransaction, commit, rollback, release };
 
 function select() {
     let select = new SelectQuery();
