@@ -838,6 +838,7 @@ async function startTransaction(connection) {
 
 async function commit(connection) {
     await util.promisify(connection.query).bind(connection)("COMMIT");
+    await util.promisify(connection.query).bind(connection)("SET autocommit = 1");
     connection.INTRANSACTION = false;
     connection.COMMITTED = true;
     release(connection);
