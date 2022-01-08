@@ -785,7 +785,7 @@ class DeleteQuery extends Query {
     }
 }
 
-module.exports = { select, insert, update, node, del, insertOnUpdate, getConnection, startTransaction, commit, rollback, release };
+module.exports = { select, insert, update, node, del, insertOnUpdate, getConnection, startTransaction, commit, rollback, release, execute };
 
 function select() {
     let select = new SelectQuery();
@@ -856,4 +856,8 @@ function release(connection) {
     if (connection._pool) {
         connection._pool.releaseConnection(connection);
     }
+}
+
+async function execute(connection, query) {
+    return await util.promisify(connection.query).bind(connection)(query);
 }
