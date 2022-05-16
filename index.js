@@ -53,7 +53,7 @@ class Leaf {
       this._value = value;
     else {
       if (operator.toUpperCase() === "IN" || operator.toUpperCase() === "NOT IN") {
-        if (Array.isArray(value)) {
+        if (Array.isArray(value) && value.length > 0) {
           this._value = "(";
           value.forEach(element => {
             const key = uniqid();
@@ -61,6 +61,8 @@ class Leaf {
             this._binding[key] = element;
           });
           this._value = this._value.slice(0, -2) + ")";
+        } else if (Array.isArray(value) && value.length === 0) {
+          this._value = "(FALSE)";
         } else {
           throw new Error(`Expect an array, got ${typeof value}`);
         }

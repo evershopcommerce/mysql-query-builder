@@ -1,6 +1,6 @@
 {
-  "name": "@nodejscart/mysql-query-builder",
-  "version": "1.3.3",
+  "name": "@evershop/mysql-query-builder",
+  "version": "1.3.4",
   "description": "A MySQL query builder for NodeJS",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kt65/mysql-query-builder.git"
+    "url": "git+https://github.com/evershopcommerce/mysql-query-builder.git"
   },
   "keywords": [
     "mysql",
@@ -21,12 +21,12 @@
     "index.js",
     "test"
   ],
-  "author": "The Nguyen (https://nodejscart.com/)",
+  "author": "The Nguyen (https://evershop.io/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kt65/mysql-query-builder/issues"
+    "url": "https://github.com/evershopcommerce/mysql-query-builder/issues"
   },
-  "homepage": "https://github.com/kt65/mysql-query-builder#readme",
+  "homepage": "https://github.com/evershopcommerce/mysql-query-builder#readme",
   "dependencies": {
     "mysql": "^2.18.1",
     "uniqid": "^5.3.0"
