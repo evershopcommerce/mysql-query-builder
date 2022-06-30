@@ -638,14 +638,8 @@ class UpdateQuery extends Query {
     if (Object.keys(this._data).length === 0)
       throw Error("You need provide data first");
 
-    let fields = await new Promise((resolve, reject) => {
-      connection.query(`DESCRIBE \`${this._table}\``, function (error, results, fields) {
-        if (error)
-          throw new Error(error);
-        else
-          resolve(results);
-      });
-    });
+    const query = util.promisify(connection.query).bind(connection);
+    let fields = await query(`DESCRIBE \`${this._table}\``)
     let set = [];
     fields.forEach(field => {
       if (field["Extra"] === "auto_increment")
@@ -699,14 +693,8 @@ class InsertQuery extends Query {
     if (Object.keys(this._data).length === 0)
       throw Error("You need provide data first");
 
-    let fields = await new Promise((resolve, reject) => {
-      connection.query(`DESCRIBE \`${this._table}\``, function (error, results, fields) {
-        if (error)
-          throw new Error(error);
-        else
-          resolve(results)
-      });
-    });
+    const query = util.promisify(connection.query).bind(connection);
+    let fields = await query(`DESCRIBE \`${this._table}\``)
 
     let fs = [], vs = [];
     fields.forEach(field => {
@@ -760,14 +748,8 @@ class InsertOnUpdateQuery extends Query {
     if (Object.keys(this._data).length === 0)
       throw Error("You need provide data first");
 
-    let fields = await new Promise((resolve, reject) => {
-      connection.query(`DESCRIBE \`${this._table}\``, function (error, results, fields) {
-        if (error)
-          throw new Error(error);
-        else
-          resolve(results)
-      });
-    });
+    const query = util.promisify(connection.query).bind(connection);
+    let fields = await query(`DESCRIBE \`${this._table}\``)
 
     let fs = [], vs = [], us = [], usp = [];
     fields.forEach(field => {

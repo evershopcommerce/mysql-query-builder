@@ -1,6 +1,6 @@
 {
   "name": "@evershop/mysql-query-builder",
-  "version": "1.3.6",
+  "version": "1.3.7",
   "description": "A MySQL query builder for NodeJS",
   "main": "index.js",
   "scripts": {
