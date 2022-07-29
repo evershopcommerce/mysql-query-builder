@@ -14,7 +14,7 @@ class Select {
     if (
       /^[a-zA-Z_1-9]+([.])(`)[a-zA-Z0-9-_]+(`)$/.test(field) ||
       /^[a-zA-Z_1-9]+([.])([*])$/.test(field) ||
-      /^[A-Z ]+([(])[a-zA-Z0-9* _=<>(,&).`]+([)])$/.test(field)
+      /^[A-Z ]+([(])[a-zA-Z0-9* _=<>(,&).`!']+([)])$/.test(field)
     )
       f += `${field}`;
     else
