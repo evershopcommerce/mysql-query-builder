@@ -1,5 +1,7 @@
 const uniqid = require('uniqid');
 const util = require('util');
+const { toString } = require('./toString');
+const { fieldResolve } = require('./fieldResolve');
 
 class Select {
   constructor() {
@@ -68,12 +70,12 @@ class Leaf {
         }
       } else {
         const key = uniqid();
-        this._binding[key] = value;
+        this._binding[key] = toString(value);
         this._value = `:${key}`;
       }
     }
     this._link = link;
-    this._field = field;
+    this._field = fieldResolve(field);
     this._operator = operator.toUpperCase();
     this._parent = node;
   }
@@ -151,7 +153,7 @@ class Node {
       if (
         element.constructor.name === "Leaf" &&
         element._link === link &&
-        element._field === field &&
+        element._field === fieldResolve(field) &&
         element._binding[field] === value
       )
         return element;
@@ -364,7 +366,7 @@ class GroupBy {
   }
 
   add(field) {
-    this._fields.push(field);
+    this._fields.push(fieldResolve(field));
 
     return this;
   }
@@ -559,6 +561,9 @@ class SelectQuery extends Query {
   }
 
   async execute(connection, releaseConnection = true) {
+    if (connection.constructor.name === 'Pool') {
+      connection = await getConnection(connection);
+    }
     let sql = await this.sql(connection);
     let binding = [];
     for (var key in this._binding) {
@@ -609,13 +614,20 @@ class UpdateQuery extends Query {
   }
 
   given(data) {
-    this._data = data;
+    if (typeof data !== "object" || data === null) {
+      throw new Error("Data must be an object and not null");
+    }
+    let copy = {};
+    Object.keys(data).forEach(key => {
+      copy[key] = toString(data[key]);
+    })
+    this._data = copy;
 
     return this;
   }
 
   prime(field, value) {
-    this._data[field] = value;
+    this._data[field] = toString(value);
 
     return this;
   }
@@ -626,24 +638,16 @@ class UpdateQuery extends Query {
     if (Object.keys(this._data).length === 0)
       throw Error("You need provide data first");
 
-    let fields = await new Promise((resolve, reject) => {
-      connection.query(`DESCRIBE \`${this._table}\``, function (error, results, fields) {
-        if (error)
-          throw new Error(error);
-        else
-          resolve(results);
-      });
-    });
+    const query = util.promisify(connection.query).bind(connection);
+    let fields = await query(`DESCRIBE \`${this._table}\``)
     let set = [];
     fields.forEach(field => {
       if (field["Extra"] === "auto_increment")
         return;
       if (this._data[field["Field"]] === undefined)
         return;
-      if (field['Null'] === 'NO' && field['Default'] !== null && !this._data[field["Field"]])
-        return
       let key = uniqid();
-      set.push(`${field["Field"]} = :${key}`);
+      set.push(`\`${field["Field"]}\` = :${key}`);
       this._binding[key] = this._data[field["Field"]];
     });
     if (set.length === 0)
@@ -664,13 +668,20 @@ class InsertQuery extends Query {
   }
 
   given(data) {
-    this._data = data;
+    if (typeof data !== "object" || data === null) {
+      throw new Error("Data must be an object and not null");
+    }
+    let copy = {};
+    Object.keys(data).forEach(key => {
+      copy[key] = toString(data[key]);
+    })
+    this._data = copy;
 
     return this;
   }
 
   prime(field, value) {
-    this._data[field] = value;
+    this._data[field] = toString(value);
 
     return this;
   }
@@ -682,14 +693,8 @@ class InsertQuery extends Query {
     if (Object.keys(this._data).length === 0)
       throw Error("You need provide data first");
 
-    let fields = await new Promise((resolve, reject) => {
-      connection.query(`DESCRIBE \`${this._table}\``, function (error, results, fields) {
-        if (error)
-          throw new Error(error);
-        else
-          resolve(results)
-      });
-    });
+    const query = util.promisify(connection.query).bind(connection);
+    let fields = await query(`DESCRIBE \`${this._table}\``)
 
     let fs = [], vs = [];
     fields.forEach(field => {
@@ -697,10 +702,8 @@ class InsertQuery extends Query {
         return;
       if (this._data[field["Field"]] === undefined)
         return;
-      if (field['Null'] === 'NO' && field['Default'] !== null && !this._data[field["Field"]])
-        return
       let key = uniqid();
-      fs.push(`${field["Field"]}`);
+      fs.push(`\`${field["Field"]}\``);
       vs.push(`:${key}`);
       this._binding[key] = this._data[field["Field"]];
     });
@@ -720,13 +723,20 @@ class InsertOnUpdateQuery extends Query {
   }
 
   given(data) {
-    this._data = data;
+    if (typeof data !== "object" || data === null) {
+      throw new Error("Data must be an object and not null");
+    }
+    let copy = {};
+    Object.keys(data).forEach(key => {
+      copy[key] = toString(data[key]);
+    })
+    this._data = copy;
 
     return this;
   }
 
   prime(field, value) {
-    this._data[field] = value;
+    this._data[field] = toString(value);;
 
     return this;
   }
@@ -738,14 +748,8 @@ class InsertOnUpdateQuery extends Query {
     if (Object.keys(this._data).length === 0)
       throw Error("You need provide data first");
 
-    let fields = await new Promise((resolve, reject) => {
-      connection.query(`DESCRIBE \`${this._table}\``, function (error, results, fields) {
-        if (error)
-          throw new Error(error);
-        else
-          resolve(results)
-      });
-    });
+    const query = util.promisify(connection.query).bind(connection);
+    let fields = await query(`DESCRIBE \`${this._table}\``)
 
     let fs = [], vs = [], us = [], usp = [];
     fields.forEach(field => {
@@ -753,13 +757,11 @@ class InsertOnUpdateQuery extends Query {
         return;
       if (this._data[field["Field"]] === undefined)
         return;
-      if (field['Null'] === 'NO' && field['Default'] !== null && !this._data[field["Field"]])
-        return
       let key = uniqid();
       let ukey = uniqid();
-      fs.push(`${field["Field"]}`);
+      fs.push(`\`${field["Field"]}\``);
       vs.push(`:${key}`);
-      us.push(`${field["Field"]} = :${ukey}`);
+      us.push(`\`${field["Field"]}\` = :${ukey}`);
       usp[ukey] = this._data[field["Field"]];
       this._binding[key] = this._data[field["Field"]];
     });
