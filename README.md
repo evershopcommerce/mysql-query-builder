@@ -1,7 +1,7 @@
-# MySQL query builder for NodeJS
+# MySQL query builder for Node
 
 [![Build](https://github.com/kt65/mysql-query-builder/actions/workflows/build.yml/badge.svg)](https://github.com/kt65/mysql-query-builder/actions/workflows/build.yml)
-[![npm version](https://badge.fury.io/js/%40nodejscart%2Fmysql-query-builder.svg)](https://badge.fury.io/js/%40nodejscart%2Fmysql-query-builder)
+[![npm version](https://badge.fury.io/js/%40evershop%2Fmysql-query-builder.svg)](https://badge.fury.io/js/%40evershop%2Fmysql-query-builder)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A MySQL query builder for NodeJS. 
@@ -9,7 +9,7 @@ A MySQL query builder for NodeJS.
 ## Installation
 
 ```javascript
-npm install @nodejscart/mysql-query-builder
+npm install @evershop/mysql-query-builder
 ```
 
 ## Usage guide
@@ -31,7 +31,7 @@ It implements async/await.
 // });
 ```
 ```javascript
-const {select} = require('@nodejscart/mysql-query-builder')
+const {select} = require('@evershop/mysql-query-builder')
 
 const products = await select("*")
 .from("product")
@@ -55,7 +55,7 @@ const products = await select("*")
 // });
 ```
 ```javascript
-const {select} = require('@nodejscart/mysql-query-builder')
+const {select} = require('@evershop/mysql-query-builder')
 
 const products = await select("*")
 .from("product")
@@ -80,7 +80,7 @@ const products = await select("*")
 // });
 ```
 ```javascript
-const {select} = require('@nodejscart/mysql-query-builder')
+const {select} = require('@evershop/mysql-query-builder')
 
 const query = select("*").from("product");
 query.where("product_id", ">", 1).and("sku", "LIKE", "sku");
@@ -106,7 +106,7 @@ const products = await query.execute(pool);
 // });
 ```
 ```javascript
-const {select} = require('@nodejscart/mysql-query-builder')
+const {select} = require('@evershop/mysql-query-builder')
 
 const query = select("*").from("product");
 query.leftJoin('price').on('product.`product_id`', '=', 'price.`product_id`');
@@ -163,14 +163,14 @@ const products = await query.execute(pool);
 //  });
 ```
 ```javascript
-const {insert} = require('@nodejscart/mysql-query-builder')
+const {insert} = require('@evershop/mysql-query-builder')
 
 const query = insert("user")
 .given({name: "David", email: "email@email.com", "phone": "123456", status: 1, notExistedColumn: "This will not be a part of the query"});
 await query.execute(pool);
 ```
 ```javascript
-const {update} = require('@nodejscart/mysql-query-builder')
+const {update} = require('@evershop/mysql-query-builder')
 
 const query = update("user")
 .given({name: "David", email: "email@email.com", "phone": "123456", status: 1, notExistedColumn: "This will not be a part of query"})
@@ -180,7 +180,7 @@ await query.execute(pool);
 ### Working with transaction
 
 ```javascript
-const {insert, getConnection, startTransaction, commit, rollback} = require('@nodejscart/mysql-query-builder');
+const {insert, getConnection, startTransaction, commit, rollback} = require('@evershop/mysql-query-builder');
 
 const pool = mysql.createPool({
     host: "localhost",
